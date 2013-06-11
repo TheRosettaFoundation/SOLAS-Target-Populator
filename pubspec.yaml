@@ -1,0 +1,6 @@
+name: TABroker
+description: Text Analytic Broker
+dependencies:
+  browser: any
+  xml: 0.9.3+2
+  json_object: any

@@ -1,0 +1,7 @@
+{
+  "urls":{"locconnect":"http://localhost/locconnect/"}
+ ,"app":{
+     "pollingInterval":1
+    ,"comName":"TA"
+  }
+}
