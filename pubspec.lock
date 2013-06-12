@@ -4,7 +4,7 @@ packages:
   browser:
     description: browser
     source: hosted
-    version: "0.5.11+1"
+    version: "0.5.13"
   json_object:
     description: json_object
     source: hosted
@@ -12,11 +12,11 @@ packages:
   meta:
     description: meta
     source: hosted
-    version: "0.5.11+1"
+    version: "0.5.13"
   unittest:
     description: unittest
     source: hosted
-    version: "0.5.11+1"
+    version: "0.5.13"
   xml:
     description: xml
     source: hosted

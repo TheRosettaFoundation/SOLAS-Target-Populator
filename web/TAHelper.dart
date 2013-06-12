@@ -41,6 +41,67 @@ class TAHelper{
        text=text.replaceFirst("<content>", "");
        text=text.substring(0,text.lastIndexOf("</content>"));
      }
+     text=text.trim();
+     var parser = new DomParser();
+     Document xliff =parser.parseFromString(text, 'text/xml');
+//     XmlElement xliff = XML.parse(text);
+     Element root =xliff.$dom_childNodes.first;
+     if(double.parse(root.attributes["version"])==2.0){
+       ElementList transUnits= xliff.queryAll("segment");
+       transUnits.forEach((Element transunit){
+         ElementList altTrans=transunit.queryAll("match");
+         var max=0.0;
+         Element maxElement; 
+         altTrans.forEach((Element alt){
+           if(alt.attributes.containsKey("matchSuitability")&&double.parse(alt.attributes["matchSuitability"])>max){
+             max=alt.attributes["match-quality"];
+             maxElement=alt;
+           }else if(alt.attributes.containsKey("matchQuality")&&alt.attributes.containsKey("similarity")){
+             current = double.parse(alt.attributes["matchQuality"])*double.parse(alt.attributes["matchQuality"]);
+             if(current>max){
+               max=current;
+               maxElement=alt;
+             }
+           }
+         });
+           if(altTrans!=null&& altTrans.isNotEmpty){
+             var placeholder = altTrans.first;
+             Element node=null; 
+             if(maxElement!=null)node = maxElement.query("target");
+             else node = altTrans.first.query("target");
+             if(node.parent.attributes.containsKey("provenanceRecordsRef")){
+               node =node.clone(true).$dom_setAttribute("its:provenanceRecordsRef", node.parent.attributes["provenanceRecordsRef"]);
+             }else node =node.clone(true);
+             transunit.insertBefore(node,placeholder);
+           }
+       });
+     }else{
+       ElementList transUnits= xliff.queryAll("trans-unit");
+      transUnits.forEach((Element transunit){
+        ElementList altTrans=transunit.queryAll("alt-trans");
+        var max=0.0;
+        Element maxElement; 
+        altTrans.forEach((Element alt){
+         if(alt.attributes.containsKey("match-quality")&&double.parse(alt.attributes["match-quality"])>max){
+           max=alt.attributes["match-quality"];
+           maxElement=alt;
+         }
+        });
+         if(altTrans!=null&& altTrans.isNotEmpty){
+          var placeholder = altTrans.first;
+          Element node=null; 
+          if(maxElement!=null)node = maxElement.query("target");
+          else node = altTrans.first.query("target");
+          if(node.parent.attributes.containsKey("provenanceRecordsRef")){
+            node =node.clone(true).$dom_setAttribute("its:provenanceRecordsRef", node.parent.attributes["provenanceRecordsRef"]);
+          }else node =node.clone(true);
+          transunit.insertBefore(node,placeholder);
+         }
+      });
+     }
+     
+     return new XmlSerializer().serializeToString(xliff);
+     
 
     
   }
@@ -48,7 +109,10 @@ class TAHelper{
   
   downloadJob(String jobid){
     LocconnectHelper.setFeedback(jobid, "downloading job file").then((HttpRequest responce)=>TAMain.ouputText(responce.responseText));
-    return LocconnectHelper.downloadJob(jobid).then((e)=>LocconnectHelper.setFeedback(jobid, "downloading complete").then((HttpRequest responce)=>TAMain.ouputText(responce.responseText)));
+    Future ret= LocconnectHelper.downloadJob(jobid);
+    ret.then(
+        (e)=>LocconnectHelper.setFeedback(jobid, "downloading complete").then((HttpRequest responce)=>TAMain.ouputText(responce.responseText)));
+    return ret; 
   }
   
   Future<List> downloadJobs() {
