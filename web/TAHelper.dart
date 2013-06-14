@@ -65,14 +65,16 @@ class TAHelper{
            }
          });
            if(altTrans!=null&& altTrans.isNotEmpty){
-             var placeholder = altTrans.first;
-             Element node=null; 
-             if(maxElement!=null)node = maxElement.query("target");
-             else node = altTrans.first.query("target");
-             if(node.parent.attributes.containsKey("provenanceRecordsRef")){
-               node =node.clone(true).$dom_setAttribute("its:provenanceRecordsRef", node.parent.attributes["provenanceRecordsRef"]);
-             }else node =node.clone(true);
-             transunit.insertBefore(node,placeholder);
+             var placeholder = transunit.query("matches");
+             if(placeholder!=null){
+               Element node=null; 
+               if(maxElement!=null)node = maxElement.query("target");
+               else node = altTrans.first.query("target");
+               if(node.parent.attributes.containsKey("provenanceRecordsRef")){
+                 node =node.clone(true).$dom_setAttribute("its:provenanceRecordsRef", node.parent.attributes["provenanceRecordsRef"]);
+               }else node =node.clone(true);
+               transunit.insertBefore(node,placeholder);
+             }
            }
        });
      }else{
@@ -132,8 +134,7 @@ class TAHelper{
     }catch(e){}
     return ret;
   }
-  
-  
+
   
   
 }

@@ -8,6 +8,7 @@ import 'dart:core';
 
 
 
+
 class LocconnectHelper{
   
   static Future<String> downloadJobs() {
@@ -26,9 +27,9 @@ class LocconnectHelper{
   
   static Future<HttpRequest> setStatus(String jobid,String progressEnum) {
     TAMain app = new TAMain();
-    var data = "{'com':'${app.conf.app.comName}','id':'$jobid', msg:'$progressEnum'}";
-    var url = "${app.conf.urls.locconnect}set_status.php/?com=${app.conf.app.comName}&id=$jobid&msg=$progressEnum";
-    return HttpRequest.request(url, method:"POST");
+    var data = {'com':app.conf.app.comName,'id':jobid, 'msg':progressEnum};
+    var url = "${app.conf.urls.locconnect}set_status.php/";
+    return HttpRequest.request(url, method:"POST" ,sendData:encodeMap(data), requestHeaders:{'Content-type':'application/x-www-form-urlencoded'});
 
   }
   
@@ -40,21 +41,30 @@ class LocconnectHelper{
   }
   
   static Future<HttpRequest> setFeedback(String jobid,String feedback) {
-    TAMain app = new TAMain();
-     
-   
-    var url = "${app.conf.urls.locconnect}send_feedback.php/?com=${app.conf.app.comName}&id=$jobid&msg=${Uri.encodeComponent(feedback)}";
-   return HttpRequest.request(url, method:"POST");
+   TAMain app = new TAMain();
+   var data = {'com':app.conf.app.comName,'id':jobid,'msg':feedback};
+   var url = "${app.conf.urls.locconnect}send_feedback.php/?com=${app.conf.app.comName}&id=$jobid&msg=${Uri.encodeComponent(feedback)}";
+   return HttpRequest.request(url, method:"POST",sendData:encodeMap(data), requestHeaders:{'Content-type':'application/x-www-form-urlencoded'});
   }
   
   static Future<HttpRequest> sendOutput(String jobid,String output) {
     TAMain app = new TAMain();
-    output=output==null?Uri.encodeComponent("<error><msg>internal failure. the output is empty</msg></error>"):Uri.encodeComponent(output);
-    var data = "{'com':'${app.conf.app.comName}','id':'$jobid', data:'$output'}";
-    var url = "${app.conf.urls.locconnect}send_output.php/?com=${app.conf.app.comName}&id=$jobid&data=$output";
-   return HttpRequest.request(url, method:"POST",sendData:data);
+    output=output==null?Uri.encodeComponent("<error><msg>internal failure. the output is empty</msg></error>"):output;
+    var data = {'com':'${app.conf.app.comName}','id':'$jobid', 'data':'$output'};
+    var url = "${app.conf.urls.locconnect}send_output.php/";
+    return HttpRequest.request(url, method:"POST",sendData:encodeMap(data), requestHeaders:{'Content-type':'application/x-www-form-urlencoded'});
 
   }
   
+  
+  
+
+  static String encodeMap(Map data) {
+    
+    return data.keys.map((k) {
+      return '${Uri.encodeComponent(k).replaceAll("%20","+")}=${Uri.encodeComponent(data[k]).replaceAll("%20","+")}';
+    }).join('&');
+  }
+
   
 }
