@@ -74,6 +74,9 @@ $$.DialogElement = {"": "Element;"};
 $$.DivElement = {"": "Element;"};
 
 $$.Document = {"": "Node;",
+  query$1: function(receiver, selectors) {
+    return receiver.querySelector(selectors);
+  },
   register$2: function(receiver, $name, options) {
     var t1 = $ === options;
     if (t1)
@@ -92,6 +95,9 @@ $$.DocumentFragment = {"": "Node;",
     if (receiver._children == null)
       receiver._children = new $.FilteredElementList(receiver, new $._ChildNodeListLazy(receiver));
     return receiver._children;
+  },
+  query$1: function(receiver, selectors) {
+    return receiver.querySelector(selectors);
   },
   queryAll$1: function(receiver, selectors) {
     return new $._FrozenElementList(receiver.querySelectorAll(selectors));
@@ -137,6 +143,8 @@ $$.DomException = {"": "Interceptor;",
   }
 };
 
+$$.DomParser = {"": "Interceptor;"};
+
 $$.Element = {"": "Node;$$dom_children:children=,id=,innerHtml:innerHTML},tagName=",
   get$attributes: function(receiver) {
     return new $._ElementAttributeMap(receiver);
@@ -149,6 +157,12 @@ $$.Element = {"": "Node;$$dom_children:children=,id=,innerHtml:innerHTML},tagNam
   },
   toString$0: function(receiver) {
     return receiver.localName;
+  },
+  query$1: function(receiver, selectors) {
+    return receiver.querySelector(selectors);
+  },
+  $$dom_setAttribute$2: function(receiver, $name, value) {
+    return receiver.setAttribute($name, value);
   },
   $isElement: true,
   $asElement: null
@@ -205,6 +219,11 @@ $$.HtmlCollection = {"": "Interceptor_ListMixin_ImmutableListMixin;",
   },
   set$length: function(receiver, value) {
     throw $.wrapException(new $.UnsupportedError("Cannot resize immutable List."));
+  },
+  get$first: function(receiver) {
+    if (receiver.length > 0)
+      return receiver[0];
+    throw $.wrapException(new $.StateError("No elements"));
   },
   elementAt$1: function(receiver, index) {
     if (index >>> 0 !== index || index >= receiver.length)
@@ -301,7 +320,7 @@ $$.Navigator = {"": "Interceptor;"};
 
 $$.NavigatorUserMediaError = {"": "Interceptor;"};
 
-$$.Node = {"": "EventTarget;text:textContent=",
+$$.Node = {"": "EventTarget;parent:parentElement=,text:textContent=",
   get$nodes: function(receiver) {
     return new $._ChildNodeListLazy(receiver);
   },
@@ -328,8 +347,14 @@ $$.Node = {"": "EventTarget;text:textContent=",
   $$dom_addEventListener$3: function(receiver, type, listener, useCapture) {
     return receiver.addEventListener(type, $.convertDartClosureToJS(listener, 1), useCapture);
   },
+  clone$1: function(receiver, deep) {
+    return receiver.cloneNode(deep);
+  },
   contains$1: function(receiver, other) {
     return receiver.contains(other);
+  },
+  insertBefore$2: function(receiver, newChild, refChild) {
+    return receiver.insertBefore(newChild, refChild);
   },
   $$dom_removeEventListener$3: function(receiver, type, listener, useCapture) {
     return receiver.removeEventListener(type, $.convertDartClosureToJS(listener, 1), useCapture);
@@ -354,6 +379,11 @@ $$.NodeList = {"": "Interceptor_ListMixin_ImmutableListMixin0;",
   },
   set$length: function(receiver, value) {
     throw $.wrapException(new $.UnsupportedError("Cannot resize immutable List."));
+  },
+  get$first: function(receiver) {
+    if (receiver.length > 0)
+      return receiver[0];
+    throw $.wrapException(new $.StateError("No elements"));
   },
   elementAt$1: function(receiver, index) {
     if (index >>> 0 !== index || index >= receiver.length)
@@ -416,7 +446,11 @@ $$.SelectElement = {"": "Element;length=,name=,type=,value="};
 
 $$.ShadowElement = {"": "Element;"};
 
-$$.ShadowRoot = {"": "DocumentFragment;innerHtml:innerHTML}"};
+$$.ShadowRoot = {"": "DocumentFragment;innerHtml:innerHTML}",
+  clone$1: function(receiver, deep) {
+    return receiver.cloneNode(deep);
+  }
+};
 
 $$.SourceElement = {"": "Element;type="};
 
@@ -490,6 +524,9 @@ $$.VideoElement = {"": "MediaElement;"};
 $$.WheelEvent = {"": "MouseEvent;"};
 
 $$.Window = {"": "EventTarget;name=",
+  get$parent: function(receiver) {
+    return $._convertNativeToDart_Window(receiver.parent);
+  },
   $$dom_addEventListener$3: function(receiver, type, listener, useCapture) {
     return receiver.addEventListener(type, $.convertDartClosureToJS(listener, 1), useCapture);
   },
@@ -506,6 +543,8 @@ $$.XPathException = {"": "Interceptor;name=",
     return receiver.toString();
   }
 };
+
+$$.XmlSerializer = {"": "Interceptor;"};
 
 $$._Attr = {"": "Node;name=,value="};
 
@@ -524,6 +563,11 @@ $$._NamedNodeMap = {"": "Interceptor_ListMixin_ImmutableListMixin1;",
   },
   set$length: function(receiver, value) {
     throw $.wrapException(new $.UnsupportedError("Cannot resize immutable List."));
+  },
+  get$first: function(receiver) {
+    if (receiver.length > 0)
+      return receiver[0];
+    throw $.wrapException(new $.StateError("No elements"));
   },
   elementAt$1: function(receiver, index) {
     if (index >>> 0 !== index || index >= receiver.length)
@@ -799,6 +843,9 @@ $$.Uint8ClampedList = {"": "Uint8List;",
   get$isEmpty: function(receiver) {
     return receiver.length === 0;
   },
+  get$isNotEmpty: function(receiver) {
+    return receiver.length !== 0;
+  },
   elementAt$1: function(receiver, index) {
     if (index >>> 0 !== index || index >= receiver.length)
       throw $.ioore(index);
@@ -818,6 +865,11 @@ $$.Uint8ClampedList = {"": "Uint8List;",
   },
   lastIndexOf$1: function($receiver, element) {
     return this.lastIndexOf$2($receiver, element, null);
+  },
+  get$first: function(receiver) {
+    if (receiver.length > 0)
+      return receiver[0];
+    throw $.wrapException(new $.StateError("No elements"));
   },
   removeLast$0: function(receiver) {
     throw $.wrapException(new $.UnsupportedError("Cannot remove from immutable List."));
@@ -913,6 +965,9 @@ $$.Uint8List = {"": "TypedData;",
   get$isEmpty: function(receiver) {
     return receiver.length === 0;
   },
+  get$isNotEmpty: function(receiver) {
+    return !this.get$isEmpty(receiver);
+  },
   elementAt$1: function(receiver, index) {
     if (index >>> 0 !== index || index >= receiver.length)
       throw $.ioore(index);
@@ -932,6 +987,11 @@ $$.Uint8List = {"": "TypedData;",
   },
   lastIndexOf$1: function($receiver, element) {
     return this.lastIndexOf$2($receiver, element, null);
+  },
+  get$first: function(receiver) {
+    if (receiver.length > 0)
+      return receiver[0];
+    throw $.wrapException(new $.StateError("No elements"));
   },
   removeLast$0: function(receiver) {
     throw $.wrapException(new $.UnsupportedError("Cannot remove from immutable List."));
@@ -967,6 +1027,8 @@ $$.BoundClosure$0 = {"": "BoundClosure;self,target,receiver",
 $$.Closure$main = {"": "Closure;call$0,$name"};
 
 $$.Closure$_processWorkerMessage = {"": "Closure;call$2,$name"};
+
+$$.Closure$_throwFormatException = {"": "Closure;call$1,$name"};
 
 $$.Closure$wrapException = {"": "Closure;call$1,$name"};
 
@@ -1022,9 +1084,18 @@ $$.Closure$_nullDoneHandler = {"": "Closure;call$0,$name"};
     libraries.push([name, uri, classes, functions, metadata]);
   }
 })([
-["TABroker", "IProvider.dart", , {
-IProvider: {"": "Object;"}}],
 ["TABroker", "LocconnectHelper.dart", , {
+LocconnectHelper_encodeMap_closure: {"": "Closure;data_0",
+  call$1: function(k) {
+    var t1, t2;
+    t1 = $.Uri__uriEncode($.List_KIf, k, false);
+    t1 = $.stringReplaceAllUnchecked(t1, "%20", "+") + "=";
+    t2 = this.data_0;
+    t2 = $.Uri__uriEncode($.List_KIf, t2.$index(t2, k), false);
+    return t1 + $.stringReplaceAllUnchecked(t2, "%20", "+");
+  }
+},
+
 LocconnectHelper_downloadJobs: function() {
   var app, t1;
   if ($.TAMain__instance == null)
@@ -1048,42 +1119,51 @@ LocconnectHelper_downloadJob: function(jobid) {
 },
 
 LocconnectHelper_setStatus: function(jobid, progressEnum) {
-  var app, t1;
+  var app, data, url, t1;
   if ($.TAMain__instance == null)
     $.TAMain__instance = new $.TAMain(null);
   app = $.TAMain__instance;
   app.get$conf;
-  $.S(app._conf.get$app().get$comName());
-  $.S(jobid);
+  data = $.makeLiteralMap(["com", app._conf.get$app().get$comName(), "id", jobid, "msg", progressEnum]);
   app.get$conf;
-  t1 = $.S(app._conf.get$urls().get$locconnect()) + "set_status.php/?com=";
-  app.get$conf;
-  return $.HttpRequest_request(t1 + $.S(app._conf.get$app().get$comName()) + "&id=" + $.S(jobid) + "&msg=" + progressEnum, "POST", null, null, null, null, null, null);
+  url = $.S(app._conf.get$urls().get$locconnect()) + "set_status.php/";
+  t1 = $.LocconnectHelper_encodeMap(data);
+  return $.HttpRequest_request(url, "POST", null, null, $.makeLiteralMap(["Content-type", "application/x-www-form-urlencoded"]), null, t1, null);
 },
 
 LocconnectHelper_setFeedback: function(jobid, feedback) {
-  var app, t1;
+  var app, data, t1, url;
   if ($.TAMain__instance == null)
     $.TAMain__instance = new $.TAMain(null);
   app = $.TAMain__instance;
+  app.get$conf;
+  data = $.makeLiteralMap(["com", app._conf.get$app().get$comName(), "id", jobid, "msg", feedback]);
   app.get$conf;
   t1 = $.S(app._conf.get$urls().get$locconnect()) + "send_feedback.php/?com=";
   app.get$conf;
-  return $.HttpRequest_request(t1 + $.S(app._conf.get$app().get$comName()) + "&id=" + $.S(jobid) + "&msg=" + $.Uri__uriEncode($.List_KIf, feedback, false), "POST", null, null, null, null, null, null);
+  url = t1 + $.S(app._conf.get$app().get$comName()) + "&id=" + $.S(jobid) + "&msg=" + $.Uri__uriEncode($.List_KIf, feedback, false);
+  t1 = $.LocconnectHelper_encodeMap(data);
+  return $.HttpRequest_request(url, "POST", null, null, $.makeLiteralMap(["Content-type", "application/x-www-form-urlencoded"]), null, t1, null);
 },
 
 LocconnectHelper_sendOutput: function(jobid, output) {
-  var app, data, t1;
+  var app, data, url, t1;
   if ($.TAMain__instance == null)
     $.TAMain__instance = new $.TAMain(null);
   app = $.TAMain__instance;
-  output = output == null ? $.Uri__uriEncode($.List_KIf, "<error><msg>internal failure. the output is empty</msg></error>", false) : $.Uri__uriEncode($.List_KIf, output, false);
+  if (output == null)
+    output = $.Uri__uriEncode($.List_KIf, "<error><msg>internal failure. the output is empty</msg></error>", false);
   app.get$conf;
-  data = "{'com':'" + $.S(app._conf.get$app().get$comName()) + "','id':'" + $.S(jobid) + "', data:'" + output + "'}";
+  data = $.makeLiteralMap(["com", $.S(app._conf.get$app().get$comName()), "id", $.S(jobid), "data", $.S(output)]);
   app.get$conf;
-  t1 = $.S(app._conf.get$urls().get$locconnect()) + "send_output.php/?com=";
-  app.get$conf;
-  return $.HttpRequest_request(t1 + $.S(app._conf.get$app().get$comName()) + "&id=" + $.S(jobid) + "&data=" + output, "POST", null, null, null, null, data, null);
+  url = $.S(app._conf.get$urls().get$locconnect()) + "send_output.php/";
+  t1 = $.LocconnectHelper_encodeMap(data);
+  return $.HttpRequest_request(url, "POST", null, null, $.makeLiteralMap(["Content-type", "application/x-www-form-urlencoded"]), null, t1, null);
+},
+
+LocconnectHelper_encodeMap: function(data) {
+  var t1 = new $.MappedIterable(new $.LinkedHashMapKeyIterable(data), new $.LocconnectHelper_encodeMap_closure(data));
+  return t1.join$1(t1, "&");
 }}],
 ["TABroker", "TAHelper.dart", , {
 TAHelper: {"": "Object;",
@@ -1093,9 +1173,37 @@ TAHelper: {"": "Object;",
   processJob$1: function(jobid) {
     $.LocconnectHelper_setStatus(jobid, "processing").then$1(new $.TAHelper_processJob_closure(this, jobid));
   },
+  processFile$2: function(jobid, text) {
+    var t1, xliff, transUnits;
+    t1 = $.getInterceptor(text);
+    if (text == null || t1.$eq(text, ""))
+      return text;
+    $.LocconnectHelper_setFeedback(jobid, "populating File").then$1(new $.TAHelper_processFile_closure());
+    if (t1.startsWith$1(text, "<content>") === true) {
+      text = t1.replaceFirst$2(text, "<content>", "");
+      t1 = $.getInterceptor$asx(text);
+      text = t1.substring$2(text, 0, t1.lastIndexOf$1(text, "</content>"));
+    }
+    text = $.trim$0$s(text);
+    xliff = new DOMParser().parseFromString(text, "text/xml");
+    t1 = $.get$attributes$x($.NodeList_methods.get$first(xliff.childNodes));
+    t1 = $.$eq($.Primitives_parseDouble(t1.$index(t1, "version"), null), 2);
+    xliff.queryAll$1;
+    if (t1) {
+      transUnits = new $._FrozenElementList(xliff.querySelectorAll("segment"));
+      transUnits.forEach$1(transUnits, new $.TAHelper_processFile_closure0(this));
+    } else {
+      transUnits = new $._FrozenElementList(xliff.querySelectorAll("trans-unit"));
+      transUnits.forEach$1(transUnits, new $.TAHelper_processFile_closure1());
+    }
+    return new XMLSerializer().serializeToString(xliff);
+  },
   downloadJob$1: function(jobid) {
+    var ret;
     $.LocconnectHelper_setFeedback(jobid, "downloading job file").then$1(new $.TAHelper_downloadJob_closure());
-    return $.LocconnectHelper_downloadJob(jobid).then$1(new $.TAHelper_downloadJob_closure0(jobid));
+    ret = $.LocconnectHelper_downloadJob(jobid);
+    ret.then$1(new $.TAHelper_downloadJob_closure0(jobid));
+    return ret;
   },
   downloadJobs$0: function() {
     if ($.TAMain__instance == null)
@@ -1137,37 +1245,38 @@ TAHelper_processJob_closure: {"": "Closure;this_0,jobid_1",
     t2 = $.get$children$x(document.querySelector("#sample_container_id"));
     t2.add$1(t2, $._ElementFactoryProvider_createElement_html("<p>" + $.S(t1) + "</p>"));
     t1 = this.jobid_1;
-    $.LocconnectHelper_setFeedback(t1, "the job is now being process").then$1(new $.TAHelper_processJob__closure(this.this_0, t1, new $.Tilde(true)));
+    $.LocconnectHelper_setFeedback(t1, "the job is now being process").then$1(new $.TAHelper_processJob__closure(this.this_0, t1));
   }
 },
 
-TAHelper_processJob__closure: {"": "Closure;this_2,jobid_3,service_4",
+TAHelper_processJob__closure: {"": "Closure;this_2,jobid_3",
   call$1: function(re) {
     var t1, t2;
     t1 = $.get$responseText$x(re);
     t2 = $.get$children$x(document.querySelector("#sample_container_id"));
     t2.add$1(t2, $._ElementFactoryProvider_createElement_html("<p>" + $.S(t1) + "</p>"));
-    t1 = this.jobid_3;
-    this.this_2.downloadJob$1(t1).then$1(new $.TAHelper_processJob___closure(t1, this.service_4));
+    t1 = this.this_2;
+    t2 = this.jobid_3;
+    t1.downloadJob$1(t2).then$1(new $.TAHelper_processJob___closure(t1, t2));
   }
 },
 
-TAHelper_processJob___closure: {"": "Closure;jobid_5,service_6",
+TAHelper_processJob___closure: {"": "Closure;this_4,jobid_5",
   call$1: function(e) {
     var t1 = this.jobid_5;
-    $.LocconnectHelper_sendOutput(t1, this.service_6.processFile$2(t1, e)).then$1(new $.TAHelper_processJob____closure(t1)).then$1(new $.TAHelper_processJob____closure0(t1)).then$1(new $.TAHelper_processJob____closure1());
+    $.LocconnectHelper_sendOutput(t1, this.this_4.processFile$2(t1, e)).then$1(new $.TAHelper_processJob____closure(t1)).then$1(new $.TAHelper_processJob____closure0(t1)).then$1(new $.TAHelper_processJob____closure1());
   }
 },
 
-TAHelper_processJob____closure: {"": "Closure;jobid_7",
+TAHelper_processJob____closure: {"": "Closure;jobid_6",
   call$1: function(e) {
-    return $.LocconnectHelper_setFeedback(this.jobid_7, "processing complete");
+    return $.LocconnectHelper_setFeedback(this.jobid_6, "processing complete");
   }
 },
 
-TAHelper_processJob____closure0: {"": "Closure;jobid_8",
+TAHelper_processJob____closure0: {"": "Closure;jobid_7",
   call$1: function(e) {
-    return $.LocconnectHelper_setStatus(this.jobid_8, "complete");
+    return $.LocconnectHelper_setStatus(this.jobid_7, "complete");
   }
 },
 
@@ -1178,6 +1287,90 @@ TAHelper_processJob____closure1: {"": "Closure;",
     t2 = $.get$children$x(document.querySelector("#sample_container_id"));
     t2.add$1(t2, $._ElementFactoryProvider_createElement_html("<p>" + $.S(t1) + "</p>"));
     return;
+  }
+},
+
+TAHelper_processFile_closure: {"": "Closure;",
+  call$1: function(responce) {
+    var t1, t2;
+    t1 = $.get$responseText$x(responce);
+    t2 = $.get$children$x(document.querySelector("#sample_container_id"));
+    t2.add$1(t2, $._ElementFactoryProvider_createElement_html("<p>" + $.S(t1) + "</p>"));
+    return;
+  }
+},
+
+TAHelper_processFile_closure0: {"": "Closure;this_2",
+  call$1: function(transunit) {
+    var t1, t2, altTrans, t3, placeholder, node;
+    t1 = {};
+    t2 = $.getInterceptor$x(transunit);
+    altTrans = t2.queryAll$1(transunit, "match");
+    t1.max_0 = 0;
+    t1.maxElement_1 = null;
+    t3 = $.getInterceptor$ax(altTrans);
+    t3.forEach$1(altTrans, new $.TAHelper_processFile__closure0(t1, this.this_2));
+    if (altTrans != null && t3.get$isNotEmpty(altTrans) === true) {
+      placeholder = t2.query$1(transunit, "matches");
+      if (placeholder != null) {
+        t1 = t1.maxElement_1;
+        node = t1 != null ? $.query$1$x(t1, "target") : $.query$1$x(t3.get$first(altTrans), "target");
+        t1 = $.getInterceptor$x(node);
+        t2.insertBefore$2(transunit, $.get$attributes$x(t1.get$parent(node)).containsKey$1("provenanceRecordsRef") === true ? $.$$dom_setAttribute$2$x(t1.clone$1(node, true), "its:provenanceRecordsRef", $.$index$asx($.get$attributes$x(t1.get$parent(node)), "provenanceRecordsRef")) : t1.clone$1(node, true), placeholder);
+      }
+    }
+  }
+},
+
+TAHelper_processFile__closure0: {"": "Closure;box_0,this_3",
+  call$1: function(alt) {
+    var t1, t2;
+    t1 = $.getInterceptor$x(alt);
+    if (t1.get$attributes(alt).containsKey$1("matchSuitability") === true && $.$gt$n($.Primitives_parseDouble($.$index$asx(t1.get$attributes(alt), "matchSuitability"), null), this.box_0.max_0) === true) {
+      t2 = this.box_0;
+      t2.max_0 = $.$index$asx(t1.get$attributes(alt), "match-quality");
+      t2.maxElement_1 = alt;
+    } else if (t1.get$attributes(alt).containsKey$1("matchQuality") === true && t1.get$attributes(alt).containsKey$1("similarity") === true) {
+      t2 = this.this_3;
+      t2.set$current($.$mul$n($.Primitives_parseDouble($.$index$asx(t1.get$attributes(alt), "matchQuality"), null), $.Primitives_parseDouble($.$index$asx(t1.get$attributes(alt), "matchQuality"), null)));
+      t1 = this.box_0;
+      if ($.$gt$n(t2.get$current(), t1.max_0) === true) {
+        t1.max_0 = t2.get$current();
+        t1.maxElement_1 = alt;
+      }
+    }
+  }
+},
+
+TAHelper_processFile_closure1: {"": "Closure;",
+  call$1: function(transunit) {
+    var t1, t2, altTrans, t3, placeholder, node;
+    t1 = {};
+    t2 = $.getInterceptor$x(transunit);
+    altTrans = t2.queryAll$1(transunit, "alt-trans");
+    t1.max_2 = 0;
+    t1.maxElement_3 = null;
+    t3 = $.getInterceptor$ax(altTrans);
+    t3.forEach$1(altTrans, new $.TAHelper_processFile__closure(t1));
+    if (altTrans != null && t3.get$isNotEmpty(altTrans) === true) {
+      placeholder = t3.get$first(altTrans);
+      t1 = t1.maxElement_3;
+      node = t1 != null ? $.query$1$x(t1, "target") : $.query$1$x(t3.get$first(altTrans), "target");
+      t1 = $.getInterceptor$x(node);
+      t2.insertBefore$2(transunit, $.get$attributes$x(t1.get$parent(node)).containsKey$1("provenanceRecordsRef") === true ? $.$$dom_setAttribute$2$x(t1.clone$1(node, true), "its:provenanceRecordsRef", $.$index$asx($.get$attributes$x(t1.get$parent(node)), "provenanceRecordsRef")) : t1.clone$1(node, true), placeholder);
+    }
+  }
+},
+
+TAHelper_processFile__closure: {"": "Closure;box_1",
+  call$1: function(alt) {
+    var t1, t2;
+    t1 = $.getInterceptor$x(alt);
+    if (t1.get$attributes(alt).containsKey$1("match-quality") === true && $.$gt$n($.Primitives_parseDouble($.$index$asx(t1.get$attributes(alt), "match-quality"), null), this.box_1.max_2) === true) {
+      t2 = this.box_1;
+      t2.max_2 = $.$index$asx(t1.get$attributes(alt), "match-quality");
+      t2.maxElement_3 = alt;
+    }
   }
 },
 
@@ -1221,48 +1414,6 @@ TAHelper_downloadJobs_closure: {"": "Closure;this_0",
 TAHelper_parseJobs_closure: {"": "Closure;ret_0",
   call$1: function(e) {
     return this.ret_0.push($.get$text$x(e));
-  }
-}}],
-["TABroker", "providers/Tilde.dart", , {
-Tilde: {"": "IProvider;enabled",
-  processFile$2: function(jobid, text) {
-    var t1, request;
-    t1 = $.getInterceptor(text);
-    if (text == null || t1.$eq(text, ""))
-      return text;
-    $.LocconnectHelper_setFeedback(jobid, "sending file for external processing").then$1(new $.Tilde_processFile_closure());
-    if (t1.startsWith$1(text, "<content>") === true) {
-      text = t1.replaceFirst$2(text, "<content>", "");
-      t1 = $.getInterceptor$asx(text);
-      text = t1.substring$2(text, 0, t1.lastIndexOf$1(text, "</content>"));
-    }
-    if ($.TAMain__instance == null)
-      $.TAMain__instance = new $.TAMain(null);
-    request = new XMLHttpRequest();
-    $.HttpRequest_methods.open$3$async(request, "POST", "http://taws.tilde.com/api/xliff", false);
-    request.send(text);
-    $.LocconnectHelper_setFeedback(jobid, "external processing complete").then$1(new $.Tilde_processFile_closure0());
-    return request.responseText;
-  }
-},
-
-Tilde_processFile_closure: {"": "Closure;",
-  call$1: function(responce) {
-    var t1, t2;
-    t1 = $.get$responseText$x(responce);
-    t2 = $.get$children$x(document.querySelector("#sample_container_id"));
-    t2.add$1(t2, $._ElementFactoryProvider_createElement_html("<p>" + $.S(t1) + "</p>"));
-    return;
-  }
-},
-
-Tilde_processFile_closure0: {"": "Closure;",
-  call$1: function(responce) {
-    var t1, t2;
-    t1 = $.get$responseText$x(responce);
-    t2 = $.get$children$x(document.querySelector("#sample_container_id"));
-    t2.add$1(t2, $._ElementFactoryProvider_createElement_html("<p>" + $.S(t1) + "</p>"));
-    return;
   }
 }}],
 ["TABroker", "tabroker.dart", , {
@@ -1424,6 +1575,11 @@ JSArray: {"": "List/Interceptor;",
       return [];
     return receiver.slice(start, end);
   },
+  get$first: function(receiver) {
+    if (receiver.length > 0)
+      return receiver[0];
+    throw $.wrapException(new $.StateError("No elements"));
+  },
   get$last: function(receiver) {
     var t1 = receiver.length;
     if (t1 > 0)
@@ -1471,6 +1627,9 @@ JSArray: {"": "List/Interceptor;",
   },
   get$isEmpty: function(receiver) {
     return receiver.length === 0;
+  },
+  get$isNotEmpty: function(receiver) {
+    return receiver.length !== 0;
   },
   toString$0: function(receiver) {
     var result = new $.StringBuffer("");
@@ -1552,6 +1711,8 @@ JSNumber: {"": "num/Interceptor;",
     return receiver - other;
   },
   $mul: function(receiver, other) {
+    if (typeof other !== "number")
+      throw $.wrapException(new $.ArgumentError(other));
     return receiver * other;
   },
   $tdiv: function(receiver, other) {
@@ -1749,6 +1910,9 @@ JSString: {"": "String/Interceptor;",
   },
   get$isEmpty: function(receiver) {
     return receiver.length === 0;
+  },
+  get$isNotEmpty: function(receiver) {
+    return receiver.length !== 0;
   },
   toString$0: function(receiver) {
     return receiver;
@@ -2920,6 +3084,9 @@ ConstantMap: {"": "Object;length>,_jsObject,_liblib5$_keys",
   get$isEmpty: function(_) {
     return $.$eq(this.length, 0);
   },
+  get$isNotEmpty: function(_) {
+    return !$.$eq(this.length, 0);
+  },
   toString$0: function(_) {
     var result = new $.StringBuffer("");
     result._contents = "";
@@ -3269,6 +3436,28 @@ Primitives_printString: function(string) {
     return;
   }
   throw "Unable to print message: " + String(string);
+},
+
+Primitives__throwFormatException: function(string) {
+  throw $.wrapException(new $.FormatException(string));
+},
+
+Primitives_parseDouble: function(source, handleError) {
+  var result, trimmed, t1;
+  if (typeof source !== "string")
+    $.throwExpression(new $.ArgumentError(source));
+  handleError = $.Primitives__throwFormatException$closure;
+  if (!/^\s*[+-]?(?:Infinity|NaN|(?:\.\d+|\d+(?:\.\d*)?)(?:[eE][+-]?\d+)?)\s*$/.test(source))
+    return handleError.call$1(source);
+  result = parseFloat(source);
+  if (isNaN(result)) {
+    trimmed = $.trim$0$s(source);
+    t1 = $.getInterceptor(trimmed);
+    if (t1.$eq(trimmed, "NaN") || t1.$eq(trimmed, "+NaN") || t1.$eq(trimmed, "-NaN"))
+      return result;
+    return handleError.call$1(source);
+  }
+  return result;
 },
 
 Primitives_objectTypeName: function(object) {
@@ -3871,6 +4060,11 @@ ListIterable: {"": "IterableBase;",
   get$isEmpty: function(_) {
     return $.$eq(this.get$length(this), 0);
   },
+  get$first: function(_) {
+    if ($.$eq(this.get$length(this), 0))
+      throw $.wrapException(new $.StateError("No elements"));
+    return this.elementAt$1(this, 0);
+  },
   contains$1: function(_, element) {
     var $length, i;
     $length = this.get$length(this);
@@ -4111,6 +4305,10 @@ MappedIterable: {"": "IterableBase;_iterable,_f",
   get$isEmpty: function(_) {
     var t1 = this._iterable;
     return t1.get$isEmpty(t1);
+  },
+  get$first: function(_) {
+    var t1 = this._iterable;
+    return this._f$1(t1.get$first(t1));
   },
   elementAt$1: function(_, index) {
     var t1 = this._iterable;
@@ -4900,6 +5098,14 @@ Stream: {"": "Object;",
     this.listen$4$cancelOnError$onDone$onError(new $.Stream_toList_closure(result), true, new $.Stream_toList_closure0(result, future), future.get$_setError());
     return future;
   },
+  get$first: function(_) {
+    var t1, future;
+    t1 = {};
+    future = new $._FutureImpl(0, null);
+    t1.subscription_0 = null;
+    t1.subscription_0 = this.listen$4$cancelOnError$onDone$onError(new $.Stream_first_closure(t1, future), true, new $.Stream_first_closure0(future), future.get$_setError());
+    return future;
+  },
   elementAt$1: function(_, index) {
     var t1, t2, future;
     t1 = {};
@@ -5002,6 +5208,20 @@ Stream_toList_closure: {"": "Closure;result_0",
 Stream_toList_closure0: {"": "Closure;result_1,future_2",
   call$0: function() {
     this.future_2._setValue$1(this.result_1);
+  }
+},
+
+Stream_first_closure: {"": "Closure;box_0,future_1",
+  call$1: function(value) {
+    this.box_0.subscription_0.cancel$0();
+    this.future_1._setValue$1(value);
+    return;
+  }
+},
+
+Stream_first_closure0: {"": "Closure;future_2",
+  call$0: function() {
+    this.future_2._setError$1(new $.StateError("No elements"));
   }
 },
 
@@ -5739,6 +5959,9 @@ HashMap: {"": "Object;_length,_strings,_nums,_rest,_keys",
   get$isEmpty: function(_) {
     return this._length === 0;
   },
+  get$isNotEmpty: function(_) {
+    return this._length !== 0;
+  },
   get$keys: function() {
     return new $.HashMapKeyIterable(this);
   },
@@ -5975,6 +6198,55 @@ IterableBase: {"": "Object;",
     for (t1 = this.get$iterator(this); t1.moveNext$0() === true;)
       f.call$1(t1.get$current());
   },
+  join$1: function(_, separator) {
+    var iterator, buffer, t1;
+    if (typeof separator !== "string")
+      return this.join$1$bailout(1, separator);
+    iterator = this.get$iterator(this);
+    if (iterator.moveNext$0() !== true)
+      return "";
+    buffer = new $.StringBuffer("");
+    buffer._contents = "";
+    if (separator === "")
+      do {
+        t1 = $.S(iterator.get$current());
+        buffer._contents = buffer._contents + t1;
+      } while (iterator.moveNext$0() === true);
+    else {
+      t1 = $.S(iterator.get$current());
+      buffer._contents = buffer._contents + t1;
+      for (; iterator.moveNext$0() === true;) {
+        buffer._contents = buffer._contents + separator;
+        t1 = $.S(iterator.get$current());
+        buffer._contents = buffer._contents + t1;
+      }
+    }
+    return buffer._contents;
+  },
+  join$1$bailout: function(state0, separator) {
+    var iterator, buffer, t1, str, t2;
+    iterator = this.get$iterator(this);
+    if (iterator.moveNext$0() !== true)
+      return "";
+    buffer = new $.StringBuffer("");
+    buffer._contents = "";
+    if (separator == null || $.$eq(separator, ""))
+      do {
+        t1 = $.S(iterator.get$current());
+        buffer._contents = buffer._contents + t1;
+      } while (iterator.moveNext$0() === true);
+    else {
+      t1 = $.S(iterator.get$current());
+      buffer._contents = buffer._contents + t1;
+      for (t1 = typeof separator === "string"; iterator.moveNext$0() === true;) {
+        str = t1 ? separator : $.S(separator);
+        buffer._contents = buffer._contents + str;
+        t2 = $.S(iterator.get$current());
+        buffer._contents = buffer._contents + t2;
+      }
+    }
+    return buffer._contents;
+  },
   toList$1$growable: function(_, growable) {
     return $.List_List$from(this, growable);
   },
@@ -5990,6 +6262,15 @@ IterableBase: {"": "Object;",
   },
   get$isEmpty: function(_) {
     return this.get$iterator(this).moveNext$0() !== true;
+  },
+  get$isNotEmpty: function(_) {
+    return this.get$isEmpty(this) !== true;
+  },
+  get$first: function(_) {
+    var it = this.get$iterator(this);
+    if (it.moveNext$0() !== true)
+      throw $.wrapException(new $.StateError("No elements"));
+    return it.get$current();
   },
   elementAt$1: function(_, index) {
     var t1, remaining, element;
@@ -6134,6 +6415,9 @@ LinkedHashMap: {"": "Object;_length,_strings,_nums,_rest,_first,_last,_modificat
   get$isEmpty: function(_) {
     return this._length === 0;
   },
+  get$isNotEmpty: function(_) {
+    return this._length !== 0;
+  },
   toString$0: function(_) {
     var result = new $.StringBuffer("");
     result._contents = "";
@@ -6199,6 +6483,14 @@ ListMixin: {"": "Object;",
   },
   get$isEmpty: function(receiver) {
     return $.$eq(this.get$length(receiver), 0);
+  },
+  get$isNotEmpty: function(receiver) {
+    return !this.get$isEmpty(receiver);
+  },
+  get$first: function(receiver) {
+    if ($.$eq(this.get$length(receiver), 0))
+      throw $.wrapException(new $.StateError("No elements"));
+    return this.$index(receiver, 0);
   },
   get$last: function(receiver) {
     if ($.$eq(this.get$length(receiver), 0))
@@ -6384,6 +6676,16 @@ ListQueue: {"": "IterableBase;_table<,_head<,_tail<,_modificationCount",
   },
   get$length: function(_) {
     return $.$and$n($.$sub$n(this._tail, this._head), this._table.length - 1);
+  },
+  get$first: function(_) {
+    var t1, t2;
+    t1 = this._head;
+    if (t1 === this._tail)
+      throw $.wrapException(new $.StateError("No elements"));
+    t2 = this._table;
+    if (t1 < 0 || t1 >= t2.length)
+      throw $.ioore(t1);
+    return t2[t1];
   },
   elementAt$1: function(_, index) {
     var t1, t2, t3;
@@ -6621,6 +6923,8 @@ Duration: {"": "Object;_duration<",
     return $.Duration$(0, 0, this._duration - t1, 0, 0, 0);
   },
   $mul: function(_, factor) {
+    if (typeof factor !== "number")
+      throw $.iae(factor);
     return $.Duration$(0, 0, this._duration * factor, 0, 0, 0);
   },
   $lt: function(_, other) {
@@ -6828,7 +7132,7 @@ _ExceptionImplementation: {"": "Object;message",
 
 FormatException: {"": "Object;message",
   toString$0: function(_) {
-    return "FormatException: " + this.message;
+    return "FormatException: " + $.S(this.message);
   },
   $isException: true
 },
@@ -6886,6 +7190,9 @@ Object: {"": ";",
   },
   $$dom_replaceChild$2: function($receiver, $0, $1) {
     return this.noSuchMethod$1(this, $.createInvocationMirror("$dom_replaceChild", "$$dom_replaceChild$2", 0, [$0, $1], []));
+  },
+  $$dom_setAttribute$2: function($receiver, $0, $1) {
+    return this.noSuchMethod$1(this, $.createInvocationMirror("$dom_setAttribute", "$$dom_setAttribute$2", 0, [$0, $1], []));
   },
   $add: function($receiver, $0) {
     return this.noSuchMethod$1(this, $.createInvocationMirror("+", "$add", 0, [$0], []));
@@ -6950,6 +7257,9 @@ Object: {"": ";",
   call$4$cancelOnError$onDone$onError: function($0, $1, $2, $3) {
     return this.noSuchMethod$1(this, $.createInvocationMirror("call", "call$4$cancelOnError$onDone$onError", 0, [$0, $1, $2, $3], ["cancelOnError", "onDone", "onError"]));
   },
+  clone$1: function($receiver, $0) {
+    return this.noSuchMethod$1(this, $.createInvocationMirror("clone", "clone$1", 0, [$0], []));
+  },
   codeUnitAt$1: function($receiver, $0) {
     return this.noSuchMethod$1(this, $.createInvocationMirror("codeUnitAt", "codeUnitAt$1", 0, [$0], []));
   },
@@ -6977,11 +7287,17 @@ Object: {"": ";",
   get$children: function($receiver) {
     return this.noSuchMethod$1(this, $.createInvocationMirror("children", "get$children", 1, [], []));
   },
+  get$first: function($receiver) {
+    return this.noSuchMethod$1(this, $.createInvocationMirror("first", "get$first", 1, [], []));
+  },
   get$id: function($receiver) {
     return this.noSuchMethod$1(this, $.createInvocationMirror("id", "get$id", 1, [], []));
   },
   get$isEmpty: function($receiver) {
     return this.noSuchMethod$1(this, $.createInvocationMirror("isEmpty", "get$isEmpty", 1, [], []));
+  },
+  get$isNotEmpty: function($receiver) {
+    return this.noSuchMethod$1(this, $.createInvocationMirror("isNotEmpty", "get$isNotEmpty", 1, [], []));
   },
   get$iterator: function($receiver) {
     return this.noSuchMethod$1(this, $.createInvocationMirror("iterator", "get$iterator", 1, [], []));
@@ -6997,6 +7313,9 @@ Object: {"": ";",
   },
   get$nodes: function($receiver) {
     return this.noSuchMethod$1(this, $.createInvocationMirror("nodes", "get$nodes", 1, [], []));
+  },
+  get$parent: function($receiver) {
+    return this.noSuchMethod$1(this, $.createInvocationMirror("parent", "get$parent", 1, [], []));
   },
   get$parentNode: function($receiver) {
     return this.noSuchMethod$1(this, $.createInvocationMirror("parentNode", "get$parentNode", 1, [], []));
@@ -7037,11 +7356,17 @@ Object: {"": ";",
   indexOf$2: function($receiver, $0, $1) {
     return this.noSuchMethod$1(this, $.createInvocationMirror("indexOf", "indexOf$2", 0, [$0, $1], []));
   },
+  insertBefore$2: function($receiver, $0, $1) {
+    return this.noSuchMethod$1(this, $.createInvocationMirror("insertBefore", "insertBefore$2", 0, [$0, $1], []));
+  },
   lastIndexOf$1: function($receiver, $0) {
     return this.noSuchMethod$1(this, $.createInvocationMirror("lastIndexOf", "lastIndexOf$1", 0, [$0], []));
   },
   map$1: function($receiver, $0) {
     return this.noSuchMethod$1(this, $.createInvocationMirror("map", "map$1", 0, [$0], []));
+  },
+  query$1: function($receiver, $0) {
+    return this.noSuchMethod$1(this, $.createInvocationMirror("query", "query$1", 0, [$0], []));
   },
   queryAll$1: function($receiver, $0) {
     return this.noSuchMethod$1(this, $.createInvocationMirror("queryAll", "queryAll$1", 0, [$0], []));
@@ -7126,6 +7451,9 @@ StringBuffer: {"": "Object;_contents@",
   get$isEmpty: function(_) {
     return this._contents.length === 0;
   },
+  get$isNotEmpty: function(_) {
+    return this._contents.length !== 0;
+  },
   write$1: function(obj) {
     if (typeof obj !== "string")
       return this.write$1$bailout(1, obj);
@@ -7137,22 +7465,48 @@ StringBuffer: {"": "Object;_contents@",
   },
   writeAll$2: function(objects, separator) {
     var iterator, str;
+    if (typeof separator !== "string")
+      return this.writeAll$2$bailout(1, objects, separator);
     iterator = $.get$iterator$ax(objects);
-    if (!iterator.moveNext$0())
+    if (iterator.moveNext$0() !== true)
       return;
-    if (separator.length === 0)
+    if ($.JSString_methods.get$isEmpty(separator))
       do {
-        str = iterator._liblib0$_current;
+        str = iterator.get$current();
         str = typeof str === "string" ? str : $.S(str);
         this._contents = this._contents + str;
-      } while (iterator.moveNext$0());
+      } while (iterator.moveNext$0() === true);
     else {
-      str = iterator._liblib0$_current;
+      str = iterator.get$current();
       str = typeof str === "string" ? str : $.S(str);
       this._contents = this._contents + str;
-      for (; iterator.moveNext$0();) {
+      for (; iterator.moveNext$0() === true;) {
         this._contents = this._contents + separator;
-        str = iterator._liblib0$_current;
+        str = iterator.get$current();
+        str = typeof str === "string" ? str : $.S(str);
+        this._contents = this._contents + str;
+      }
+    }
+  },
+  writeAll$2$bailout: function(state0, objects, separator) {
+    var iterator, str, t1;
+    iterator = $.get$iterator$ax(objects);
+    if (iterator.moveNext$0() !== true)
+      return;
+    if ($.get$isEmpty$asx(separator) === true)
+      do {
+        str = iterator.get$current();
+        str = typeof str === "string" ? str : $.S(str);
+        this._contents = this._contents + str;
+      } while (iterator.moveNext$0() === true);
+    else {
+      str = iterator.get$current();
+      str = typeof str === "string" ? str : $.S(str);
+      this._contents = this._contents + str;
+      for (t1 = typeof separator === "string"; iterator.moveNext$0() === true;) {
+        str = t1 ? separator : $.S(separator);
+        this._contents = this._contents + str;
+        str = iterator.get$current();
         str = typeof str === "string" ? str : $.S(str);
         this._contents = this._contents + str;
       }
@@ -7343,6 +7697,12 @@ _ChildrenElementList: {"": "ListBase;_element,_childElements",
       t1.removeChild(result);
     return result;
   },
+  get$first: function(_) {
+    var result = this._element.firstElementChild;
+    if (result == null)
+      throw $.wrapException(new $.StateError("No elements"));
+    return result;
+  },
   $asList: function() { return [$.Element]; },
   $asIterable: function() { return [$.Element]; }
 },
@@ -7362,6 +7722,9 @@ _FrozenElementList: {"": "ListBase;_nodeList",
   },
   set$length: function(_, newLength) {
     throw $.wrapException(new $.UnsupportedError("Cannot modify list"));
+  },
+  get$first: function(_) {
+    return $.NodeList_methods.get$first(this._nodeList);
   },
   $asList: null,
   $asIterable: null,
@@ -7385,13 +7748,13 @@ HttpRequest_getString_closure: {"": "Closure;",
   }
 },
 
-HttpRequest_request_closure1: {"": "Closure;xhr_0",
+HttpRequest_request_closure: {"": "Closure;xhr_0",
   call$2: function(header, value) {
     this.xhr_0.setRequestHeader(header, value);
   }
 },
 
-HttpRequest_request_closure: {"": "Closure;completer_1,xhr_2",
+HttpRequest_request_closure0: {"": "Closure;completer_1,xhr_2",
   call$1: function(e) {
     var t1, t2, t3;
     t1 = this.xhr_2;
@@ -7415,7 +7778,7 @@ HttpRequest_request_closure: {"": "Closure;completer_1,xhr_2",
   }
 },
 
-HttpRequest_request_closure0: {"": "Closure;completer_3",
+HttpRequest_request_closure1: {"": "Closure;completer_3",
   call$1: function(e) {
     var t1 = this.completer_3;
     if (t1._isComplete)
@@ -7426,6 +7789,12 @@ HttpRequest_request_closure0: {"": "Closure;completer_3",
 },
 
 _ChildNodeListLazy: {"": "ListBase;_this",
+  get$first: function(_) {
+    var result = this._this.firstChild;
+    if (result == null)
+      throw $.wrapException(new $.StateError("No elements"));
+    return result;
+  },
   add$1: function(_, value) {
     this._this.appendChild(value);
   },
@@ -7555,6 +7924,9 @@ _AttributeMap: {"": "Object;",
   },
   get$isEmpty: function(_) {
     return this.get$length(this) === 0;
+  },
+  get$isNotEmpty: function(_) {
+    return this.get$length(this) !== 0;
   },
   $isMap: true,
   $asMap: function() { return [$.JSString, $.JSString]; }
@@ -7698,7 +8070,11 @@ _WrappedIterator: {"": "Object;_liblib$_iterator",
   }
 },
 
-_DOMWindowCrossFrame: {"": "Object;_window"},
+_DOMWindowCrossFrame: {"": "Object;_window",
+  get$parent: function(_) {
+    return $._DOMWindowCrossFrame__createSafe(this._window.parent);
+  }
+},
 
 FixedSizeListIterator: {"": "Object;_array,_liblib$_length,_position,_current",
   moveNext$0: function() {
@@ -7816,13 +8192,15 @@ HttpRequest_request: function(url, method, mimeType, onProgress, requestHeaders,
   completer = new $._AsyncCompleter(new $._FutureImpl(0, null), false);
   xhr = new XMLHttpRequest();
   $.open$3$async$x(xhr, method == null ? "GET" : method, url, true);
+  if (requestHeaders != null)
+    requestHeaders.forEach$1(requestHeaders, new $.HttpRequest_request_closure(xhr));
   t1 = new $._EventStream(xhr, $.EventStreamProvider_load._eventType, false);
-  t1 = new $._EventStreamSubscription(0, t1._target, t1._eventType, new $.HttpRequest_request_closure(completer, xhr), t1._useCapture);
+  t1 = new $._EventStreamSubscription(0, t1._target, t1._eventType, new $.HttpRequest_request_closure0(completer, xhr), t1._useCapture);
   t2 = t1._onData;
   if (t2 != null && !t1.get$isPaused())
     $.$$dom_addEventListener$3$x(t1._target, t1._eventType, t2, t1._useCapture);
   t1 = new $._EventStream(xhr, $.EventStreamProvider_error._eventType, false);
-  t1 = new $._EventStreamSubscription(0, t1._target, t1._eventType, new $.HttpRequest_request_closure0(completer), t1._useCapture);
+  t1 = new $._EventStreamSubscription(0, t1._target, t1._eventType, new $.HttpRequest_request_closure1(completer), t1._useCapture);
   t2 = t1._onData;
   if (t2 != null && !t1.get$isPaused())
     $.$$dom_addEventListener$3$x(t1._target, t1._eventType, t2, t1._useCapture);
@@ -7835,6 +8213,17 @@ HttpRequest_request: function(url, method, mimeType, onProgress, requestHeaders,
 
 _ChildNodeListLazy$: function(_this) {
   return new $._ChildNodeListLazy(_this);
+},
+
+_convertNativeToDart_Window: function(win) {
+  return $._DOMWindowCrossFrame__createSafe(win);
+},
+
+_DOMWindowCrossFrame__createSafe: function(w) {
+  if (w === window)
+    return w;
+  else
+    return new $._DOMWindowCrossFrame(w);
 }}],
 ["dart.isolate", "dart:isolate", , {
 ReceivePort: {"": "Object;"}}],
@@ -8774,6 +9163,9 @@ JsonObject: {"": "Object;_jsonString,_objectData,isExtendable",
   contains$1: function(_, element) {
     return $.contains$1$asx(this.toIterable$0(), element);
   },
+  get$first: function(_) {
+    return $.get$first$ax(this.toIterable$0());
+  },
   elementAt$1: function(_, index) {
     return $.elementAt$1$ax(this.toIterable$0(), index);
   },
@@ -8937,6 +9329,9 @@ XmlCollection: {"": "Object;_collection<",
   get$isEmpty: function(_) {
     return this._collection.length === 0;
   },
+  get$first: function(_) {
+    return $.JSArray_methods.get$first(this._collection);
+  },
   elementAt$1: function(_, index) {
     var t1 = this._collection;
     if (index >>> 0 !== index || index >= t1.length)
@@ -8947,6 +9342,35 @@ XmlCollection: {"": "Object;_collection<",
     var t1 = new $.XmlCollection($.List_List($));
     $.JSArray_methods.addAll$1(t1._collection, $.List_List$from(new $.WhereIterable(this._collection, new $.XmlCollection_allElements_closure()), true));
     return t1;
+  },
+  query$1: function(_, queryOn) {
+    var list, t1, t2;
+    list = new $.XmlCollection($.List_List($));
+    for (t1 = this.allElements$0()._collection, t1 = new $.ListIterator(t1, t1.length, 0, null), t2 = list._collection; t1.moveNext$0();) {
+      this._queryNameInternal$3(queryOn, list, t1._liblib0$_current);
+      if (t2.length !== 0)
+        break;
+    }
+    return list;
+  },
+  _queryNameInternal$3: function(tagName, list, element) {
+    var t1, t2;
+    t1 = $.getInterceptor$x(element);
+    t2 = t1.get$name(element);
+    if (typeof t2 !== "string")
+      return this._queryNameInternal$3$bailout(1, tagName, list, element, t1, t2);
+    if (t2 === tagName) {
+      list._collection.push(element);
+      return;
+    } else if (element.get$hasChildren() === true)
+      $.forEach$1$ax(t1.get$children(element).allElements$0(), new $.XmlCollection__queryNameInternal_closure(tagName, list));
+  },
+  _queryNameInternal$3$bailout: function(state0, tagName, list, element, t1, t2) {
+    if ($.$eq(t2, tagName)) {
+      list._collection.push(element);
+      return;
+    } else if (element.get$hasChildren() === true)
+      $.forEach$1$ax(t1.get$children(element).allElements$0(), new $.XmlCollection__queryNameInternal_closure(tagName, list));
   },
   queryAll$1: function(_, queryOn) {
     var list, t1;
@@ -8987,6 +9411,15 @@ XmlCollection: {"": "Object;_collection<",
 XmlCollection_allElements_closure: {"": "Closure;",
   call$1: function(n) {
     return typeof n === "object" && n !== null && !!$.getInterceptor(n).$isXmlElement;
+  }
+},
+
+XmlCollection__queryNameInternal_closure: {"": "Closure;tagName_0,list_1",
+  call$1: function(el) {
+    var t1 = this.list_1;
+    if (t1._collection.length !== 0)
+      return;
+    el._queryNameInternal$2(this.tagName_0, t1);
   }
 },
 
@@ -9057,6 +9490,22 @@ XmlElement: {"": "XmlNode;name>,_children,_attributes,_namespaces,type,parent",
     if (elements.length !== 0)
       $.IterableMixinWorkaround_forEach(elements, new $.XmlElement_addChildren_closure(this));
   },
+  query$1: function(_, queryOn) {
+    var list = new $.XmlCollection($.List_List($));
+    this._queryNameInternal$2(queryOn, list);
+    return list;
+  },
+  _queryNameInternal$2: function(tagName, list) {
+    var t1;
+    if ($.$eq(this.name, tagName)) {
+      $.add$1$ax(list, this);
+      return;
+    } else {
+      t1 = this._children;
+      if (t1._collection.length !== 0)
+        $.IterableMixinWorkaround_forEach(t1.allElements$0()._collection, new $.XmlElement__queryNameInternal_closure(tagName, list));
+    }
+  },
   queryAll$1: function(_, queryOn) {
     var list = new $.XmlCollection($.List_List($));
     this._queryAllNamesInternal$2(queryOn, list);
@@ -9110,6 +9559,15 @@ XmlElement_addChildren_closure: {"": "Closure;this_0",
   }
 },
 
+XmlElement__queryNameInternal_closure: {"": "Closure;tagName_0,list_1",
+  call$1: function(el) {
+    var t1 = this.list_1;
+    if ($.get$isEmpty$asx(t1) !== true)
+      return;
+    el._queryNameInternal$2(this.tagName_0, t1);
+  }
+},
+
 XmlElement__queryAllNamesInternal_closure: {"": "Closure;",
   call$1: function(el) {
     return typeof el === "object" && el !== null && !!$.getInterceptor(el).$isXmlElement;
@@ -9159,7 +9617,7 @@ XmlNamespace: {"": "XmlNode;name>,uri,type,parent",
   $isXmlNamespace: true
 },
 
-XmlNode: {"": "Object;type>,parent'",
+XmlNode: {"": "Object;type>,parent*",
   remove$0: function(_) {
     var t1, i;
     t1 = this.parent;
@@ -10344,6 +10802,7 @@ $$ = null;
 
 $.main$closure = new $.Closure$main($.main, "main$closure");
 $.IsolateNatives__processWorkerMessage$closure = new $.Closure$_processWorkerMessage($.IsolateNatives__processWorkerMessage, "IsolateNatives__processWorkerMessage$closure");
+$.Primitives__throwFormatException$closure = new $.Closure$_throwFormatException($.Primitives__throwFormatException, "Primitives__throwFormatException$closure");
 $.wrapException$closure = new $.Closure$wrapException($.wrapException, "wrapException$closure");
 $.DartError_toStringWrapper$closure = new $.Closure$toStringWrapper($.DartError_toStringWrapper, "DartError_toStringWrapper$closure");
 $.invokeClosure$closure = new $.Closure$invokeClosure($.invokeClosure, "invokeClosure$closure");
@@ -10465,6 +10924,7 @@ $.DomName_eVL = new $.DomName("DeviceMotionEvent.rotationRate");
 $.DomName_oCX = new $.DomName("HTMLButtonElement.form");
 $.DomName_PluginArray = new $.DomName("PluginArray");
 $.DomName_fJC = new $.DomName("SVGFEComponentTransferElement.height");
+$.DomName_6ph = new $.DomName("XMLSerializer.XMLSerializer");
 $.DomName_AudioNode = new $.DomName("AudioNode");
 $.DomName_WDS = new $.DomName("SVGFEGaussianBlurElement.stdDeviationY");
 $.DomName_UW2 = new $.DomName("StorageEvent.url");
@@ -10569,6 +11029,7 @@ $.DomName_CSSFontFaceRule = new $.DomName("CSSFontFaceRule");
 $.DomName_4CA = new $.DomName("DeviceOrientationEvent.alpha");
 $.DomName_SQLTransactionSync = new $.DomName("SQLTransactionSync");
 $.JSName_responseXML = new $.JSName("responseXML");
+$.DomName_43h0 = new $.DomName("XMLSerializer.serializeToString");
 $.DomName_HTMLOptionsCollection = new $.DomName("HTMLOptionsCollection");
 $.DomName_Xdq = new $.DomName("Document.selectedStylesheetSet");
 $.DomName_SVGMatrix = new $.DomName("SVGMatrix");
@@ -10639,6 +11100,7 @@ $.DomName_SVGAnimatedNumberList = new $.DomName("SVGAnimatedNumberList");
 $.DomName_Mpb = new $.DomName("SVGFESpecularLightingElement.width");
 $.DomName_MAi = new $.DomName("HTMLFormElement.length");
 $.JSName_namespaceURI = new $.JSName("namespaceURI");
+$.DomName_b1T = new $.DomName("ShadowRoot.cloneNode");
 $.DomName_84u = new $.DomName("HTMLObjectElement.width");
 $.DomName_DOMApplicationCache = new $.DomName("DOMApplicationCache");
 $.DomName_JQO = new $.DomName("SVGForeignObjectElement.x");
@@ -10680,7 +11142,7 @@ $.DomName_KDi = new $.DomName("SVGAElement.target");
 $.DomName_SQLResultSetRowList = new $.DomName("SQLResultSetRowList");
 $.DomName_mXu = new $.DomName("SVGFEGaussianBlurElement.width");
 $.DomName_SpeechSynthesisEvent = new $.DomName("SpeechSynthesisEvent");
-$.DomName_43h0 = new $.DomName("SVGFEConvolveMatrixElement.targetY");
+$.DomName_43h1 = new $.DomName("SVGFEConvolveMatrixElement.targetY");
 $.DomName_u2Y = new $.DomName("SVGFilterElement.xmllang");
 $.DomName_WebGLProgram = new $.DomName("WebGLProgram");
 $.JSName_pageX = new $.JSName("pageX");
@@ -10818,7 +11280,7 @@ $.DomName_8aB1 = new $.DomName("Element.onerror");
 $.DomName_Yuf = new $.DomName("XMLHttpRequest.progressEvent");
 $.DomName_HTMLDivElement = new $.DomName("HTMLDivElement");
 $.DomName_YHK = new $.DomName("SVGDefsElement.farthestViewportElement");
-$.DomName_43h1 = new $.DomName("SVGSVGElement.xmlspace");
+$.DomName_43h2 = new $.DomName("SVGSVGElement.xmlspace");
 $.DomName_H37 = new $.DomName("HTMLLinkElement.rel");
 $.DomName_SVGAnimatedEnumeration = new $.DomName("SVGAnimatedEnumeration");
 $.DomName_DirectoryReader = new $.DomName("DirectoryReader");
@@ -10856,7 +11318,7 @@ $.DomName_Jsp0 = new $.DomName("SVGPatternElement.width");
 $.DomName_HTMLCanvasElement = new $.DomName("HTMLCanvasElement");
 $.DomName_OfflineAudioContext = new $.DomName("OfflineAudioContext");
 $.DomName_SVGPathSegCurvetoCubicRel = new $.DomName("SVGPathSegCurvetoCubicRel");
-$.DomName_43h2 = new $.DomName("Document.body");
+$.DomName_43h3 = new $.DomName("Document.body");
 $.DomName_ww8 = new $.DomName("SVGAnimatedNumberList.animVal");
 $.DomName_SVGLength = new $.DomName("SVGLength");
 $.DomName_ElementTraversal = new $.DomName("ElementTraversal");
@@ -10960,6 +11422,7 @@ $.DomName_SQLTransaction = new $.DomName("SQLTransaction");
 $.DomName_Tr0 = new $.DomName("SVGFEOffsetElement.in1");
 $.JSName_selectedStylesheetSet = new $.JSName("selectedStylesheetSet");
 $.DomName_6G3 = new $.DomName("SVGFECompositeElement.k4");
+$.DomName_PrM = new $.DomName("Node.insertBefore");
 $.DomName_J2O = new $.DomName("SVGImageElement.height");
 $.JSName_byteLength = new $.JSName("byteLength");
 $.DomName_02 = new $.DomName("XMLHttpRequest.responseXML");
@@ -10977,6 +11440,7 @@ $.DomName_bEE = new $.DomName("Window.outerWidth");
 $.DomName_Aqf = new $.DomName("SVGFEDiffuseLightingElement.diffuseConstant");
 $.DomName_f511 = new $.DomName("SVGForeignObjectElement.externalResourcesRequired");
 $.DomName_atK0 = new $.DomName("XMLHttpRequestProgressEvent.totalSize");
+$.DomName_Imr = new $.DomName("DOMParser.parseFromString");
 $.DomName_CSSHostRule = new $.DomName("CSSHostRule");
 $.DomName_MediaElementAudioSourceNode = new $.DomName("MediaElementAudioSourceNode");
 $.DomName_4QF = new $.DomName("SVGSVGElement.currentTranslate");
@@ -11219,6 +11683,7 @@ $.DomName_HTMLOListElement = new $.DomName("HTMLOListElement");
 $.DomName_6QF = new $.DomName("SVGScriptElement.externalResourcesRequired");
 $.DomName_g78 = new $.DomName("SVGImageElement.requiredExtensions");
 $.DomName_TF9 = new $.DomName("SVGTextContentElement.requiredExtensions");
+$.DomName_UAT = new $.DomName("DOMParser.DOMParser");
 $.DomName_EXTTextureFilterAnisotropic = new $.DomName("EXTTextureFilterAnisotropic");
 $.DomName_JfL = new $.DomName("SVGFETurbulenceElement.numOctaves");
 $.DomName_MEg = new $.DomName("XMLHttpRequest.send");
@@ -11297,7 +11762,7 @@ $.DomName_Fcu = new $.DomName("HTMLTableCellElement.rowSpan");
 $.DomName_PagePopupController = new $.DomName("PagePopupController");
 $.DomName_qJx = new $.DomName("NavigatorUserMediaSuccessCallback");
 $.JSName_webkitVisibilityState = new $.JSName("webkitVisibilityState");
-$.DomName_PrM = new $.DomName("SVGPolygonElement.requiredFeatures");
+$.DomName_PrM0 = new $.DomName("SVGPolygonElement.requiredFeatures");
 $.DomName_k2a = new $.DomName("SVGSVGElement.pixelUnitToMillimeterX");
 $.DomName_EntryArraySync = new $.DomName("EntryArraySync");
 $.DomName_7FR = new $.DomName("Element.translate");
@@ -11389,7 +11854,6 @@ $.DomName_Mvk = new $.DomName("HTMLButtonElement.autofocus");
 $.DomName_SVGStyleElement = new $.DomName("SVGStyleElement");
 $.DomName_3je = new $.DomName("Element.tabIndex");
 $.DomName_9ht1 = new $.DomName("SVGFilterElement.y");
-$.HttpRequest_methods = $.HttpRequest.prototype;
 $.DomName_SVGTSpanElement = new $.DomName("SVGTSpanElement");
 $.JSName_title = new $.JSName("title");
 $.DomName_BCG = new $.DomName("SpeechSynthesisEvent.charIndex");
@@ -11413,6 +11877,7 @@ $.DomName_HTMLFrameSetElement = new $.DomName("HTMLFrameSetElement");
 $.DomName_u5T = new $.DomName("Navigator.plugins");
 $.DomName_c0B = new $.DomName("SVGZoomEvent.newTranslate");
 $.DomName_DeviceRotationRate = new $.DomName("DeviceRotationRate");
+$.DomName_YZQ = new $.DomName("Node.cloneNode");
 $.DomName_Rfd = new $.DomName("ShadowRoot.resetStyleInheritance");
 $.DomName_08 = new $.DomName("SVGSwitchElement.nearestViewportElement");
 $.DomName_HTMLHtmlElement = new $.DomName("HTMLHtmlElement");
@@ -11664,7 +12129,7 @@ $.DomName_6FR3 = new $.DomName("HTMLFormElement.method");
 $.XmlException_sEs0 = new $.XmlException("Nested PI not allowed.", "", 0);
 $.DomName_SVGEllipseElement = new $.DomName("SVGEllipseElement");
 $.DomName_Q1t = new $.DomName("SVGDescElement.xmlspace");
-$.DomName_Imr = new $.DomName("Document.querySelectorAll");
+$.DomName_Imr0 = new $.DomName("Document.querySelectorAll");
 $.DomName_CSSMediaRule = new $.DomName("CSSMediaRule");
 $.DomName_uwZ0 = new $.DomName("HTMLTextAreaElement.rows");
 $.DomName_ifx0 = new $.DomName("StorageEvent.newValue");
@@ -11698,7 +12163,7 @@ $.DomName_IDBTransaction = new $.DomName("IDBTransaction");
 $.DomName_pEM = new $.DomName("SVGFEDiffuseLightingElement.width");
 $.DomName_IDBAny = new $.DomName("IDBAny");
 $.DomName_YAl = new $.DomName("SVGFEColorMatrixElement.type");
-$.DomName_43h3 = new $.DomName("SVGPolylineElement.transform");
+$.DomName_43h4 = new $.DomName("SVGPolylineElement.transform");
 $.DomName_cMm0 = new $.DomName("SVGMaskElement.y");
 $.DomName_SVGViewElement = new $.DomName("SVGViewElement");
 $.JSName_children = new $.JSName("children");
@@ -12152,7 +12617,7 @@ $.DomName_HTMLIFrameElement = new $.DomName("HTMLIFrameElement");
 $.EventStreamProvider_error = new $.EventStreamProvider("error");
 $.DomName_U43 = new $.DomName("HTMLMediaElement.src");
 $.JSName_nextSibling = new $.JSName("nextSibling");
-$.DomName_43h4 = new $.DomName("SVGFEConvolveMatrixElement.targetX");
+$.DomName_43h5 = new $.DomName("SVGFEConvolveMatrixElement.targetX");
 $.DomName_Ogs = new $.DomName("Window.close");
 $.DomName_SpeechRecognitionResultList = new $.DomName("SpeechRecognitionResultList");
 $.DomName_WebKitNamedFlow = new $.DomName("WebKitNamedFlow");
@@ -12169,7 +12634,7 @@ $.DomName_wmx0 = new $.DomName("SVGMarkerElement.markerHeight");
 $.DomName_g781 = new $.DomName("SVGFilterElement.width");
 $.DomName_atn = new $.DomName("Node.lastChild");
 $.DomName_0PM = new $.DomName("HTMLTextAreaElement.defaultValue");
-$.DomName_b1T = new $.DomName("HTMLOutputElement.willValidate");
+$.DomName_b1T0 = new $.DomName("HTMLOutputElement.willValidate");
 $.DomName_qam = new $.DomName("HTMLModElement.dateTime");
 $.DomName_HTMLFrameElement = new $.DomName("HTMLFrameElement");
 $.DomName_DK5 = new $.DomName("HTMLTextAreaElement.form");
@@ -12270,6 +12735,7 @@ $.DomName_SpeechInputResult = new $.DomName("SpeechInputResult");
 $.JSArray_methods = $.JSArray.prototype;
 $.DomName_HTMLEmbedElement = new $.DomName("HTMLEmbedElement");
 $.DomName_Path = new $.DomName("Path");
+$.JSName_cloneNode = new $.JSName("cloneNode");
 $.DomName_QIl = new $.DomName("Element.className");
 $.DomName_AeS0 = new $.DomName("HTMLTrackElement.readyState");
 $.DomName_Xt7 = new $.DomName("HTMLMediaElement.readyState");
@@ -12381,6 +12847,9 @@ $.$$dom_removeEventListener$3$x = function(receiver, a0, a1, a2) {
 $.$$dom_replaceChild$2$x = function(receiver, a0, a1) {
   return $.getInterceptor$x(receiver).$$dom_replaceChild$2(receiver, a0, a1);
 };
+$.$$dom_setAttribute$2$x = function(receiver, a0, a1) {
+  return $.getInterceptor$x(receiver).$$dom_setAttribute$2(receiver, a0, a1);
+};
 $.$add$ns = function(receiver, a0) {
   if (typeof receiver == "number" && typeof a0 == "number")
     return receiver + a0;
@@ -12483,6 +12952,9 @@ $.get$cells$x = function(receiver) {
 $.get$children$x = function(receiver) {
   return $.getInterceptor$x(receiver).get$children(receiver);
 };
+$.get$first$ax = function(receiver) {
+  return $.getInterceptor$ax(receiver).get$first(receiver);
+};
 $.get$hashCode$ = function(receiver) {
   return $.getInterceptor(receiver).get$hashCode(receiver);
 };
@@ -12548,6 +13020,9 @@ $.map$1$ax = function(receiver, a0) {
 };
 $.open$3$async$x = function(receiver, a0, a1, a2) {
   return $.getInterceptor$x(receiver).open$3$async(receiver, a0, a1, a2);
+};
+$.query$1$x = function(receiver, a0) {
+  return $.getInterceptor$x(receiver).query$1(receiver, a0);
 };
 $.queryAll$1$x = function(receiver, a0) {
   return $.getInterceptor$x(receiver).queryAll$1(receiver, a0);
@@ -12784,6 +13259,8 @@ $.defineNativeMethods("DOMError", $.DomError);
 
 $.defineNativeMethods("DOMException", $.DomException);
 
+$.defineNativeMethods("DOMParser", $.DomParser);
+
 $.defineNativeMethodsNonleaf("Element", $.Element);
 
 $.defineNativeMethods("HTMLEmbedElement", $.EmbedElement);
@@ -12995,6 +13472,8 @@ $.defineNativeMethods("MouseScrollEvent|MouseWheelEvent|WheelEvent", $.WheelEven
 $.defineNativeMethods("DOMWindow|Window", $.Window);
 
 $.defineNativeMethods("XPathException", $.XPathException);
+
+$.defineNativeMethods("XMLSerializer", $.XmlSerializer);
 
 $.defineNativeMethods("Attr", $._Attr);
 
@@ -13325,7 +13804,7 @@ function init() {
         }
       }
     }
-    var objectClassObject = collectedClasses.Object, shortNames = "get$p,_add$1,call$0,call$1,call$2,call$3,eval$1,get$_i,get$sb,next$0,then$1,get$_id,get$app,write$1,cancel$0,get$_key,get$_str,get$_xml,get$keys,get$next,get$urls,lookup$1,set$next,toJson$0,get$_head,get$_name,get$_next,get$_tail,perform$1,process$0,set$_next,addChild$1,get$_state,get$_table,get$_value,moveNext$0,set$_state,set$_value,visitMap$1,_addError$1,_callback$2,_dispatch$1,_setError$1,_setValue$1,get$_buffer,get$_scopes,get$comName,get$current,parseJobs$1,set$_handle,visitList$1,_sendError$1,_sendValue$1,catchError$1,handleNext$1,processJob$1,unregister$1,_assertKind$3,_setGlobals$0,containsKey$1,downloadJob$1,get$_callback,get$_contents,get$_duration,get$_workerId,get$quoteKind,removeFirst$0,set$_contents,get$_isolateId,get$locconnect,get$namespaces,runIteration$0,_checkReplyTo$1,_liblib3$_add$1,get$_collection,get$_futurePort,get$hasChildren,visitSendPort$1,get$_receivePort,visitPrimitive$1,get$_nextListener,set$_nextListener,toStringLiteral$0,visitCloseToken$1,_extractElements$1,visitIsolateSink$1,get$pollingInterval,get$_liblib2$_length,isNamespaceInScope$1,deserializeSendPort$1,get$_liblib0$_current,get$_resultOrListeners,deserializeCloseToken$1,_queryAllNamesInternal$2,deserializeIsolateSink$1".split(","), longNames = "p,_add,call,call,call,call,eval,_i,sb,next,then,_id,app,write,cancel,_key,_str,_xml,keys,next,urls,lookup,next=,toJson,_head,_name,_next,_tail,perform,process,_next=,addChild,_state,_table,_value,moveNext,_state=,_value=,visitMap,_addError,_callback,_dispatch,_setError,_setValue,_buffer,_scopes,comName,current,parseJobs,_handle=,visitList,_sendError,_sendValue,catchError,handleNext,processJob,unregister,_assertKind,_setGlobals,containsKey,downloadJob,_callback,_contents,_duration,_workerId,quoteKind,removeFirst,_contents=,_isolateId,locconnect,namespaces,runIteration,_checkReplyTo,_add,_collection,_futurePort,hasChildren,visitSendPort,_receivePort,visitPrimitive,_nextListener,_nextListener=,toStringLiteral,visitCloseToken,_extractElements,visitIsolateSink,pollingInterval,_length,isNamespaceInScope,deserializeSendPort,_current,_resultOrListeners,deserializeCloseToken,_queryAllNamesInternal,deserializeIsolateSink".split(",");
+    var objectClassObject = collectedClasses.Object, shortNames = "get$p,_add$1,call$0,call$1,call$2,call$3,eval$1,get$_i,get$sb,next$0,then$1,get$_id,get$app,write$1,cancel$0,get$_key,get$_str,get$_xml,get$keys,get$next,get$urls,lookup$1,set$next,toJson$0,get$_head,get$_name,get$_next,get$_tail,perform$1,process$0,set$_next,addChild$1,get$_state,get$_table,get$_value,moveNext$0,set$_state,set$_value,visitMap$1,_addError$1,_callback$2,_dispatch$1,_setError$1,_setValue$1,get$_buffer,get$_scopes,get$comName,get$current,parseJobs$1,set$_handle,set$current,visitList$1,_sendError$1,_sendValue$1,catchError$1,handleNext$1,processJob$1,unregister$1,_assertKind$3,_setGlobals$0,allElements$0,containsKey$1,downloadJob$1,get$_callback,get$_contents,get$_duration,get$_workerId,get$quoteKind,processFile$2,removeFirst$0,set$_contents,get$_isolateId,get$locconnect,get$namespaces,runIteration$0,_checkReplyTo$1,_liblib3$_add$1,get$_collection,get$_futurePort,get$hasChildren,visitSendPort$1,get$_receivePort,visitPrimitive$1,get$_nextListener,set$_nextListener,toStringLiteral$0,visitCloseToken$1,_extractElements$1,visitIsolateSink$1,get$pollingInterval,_queryNameInternal$2,get$_liblib2$_length,isNamespaceInScope$1,deserializeSendPort$1,get$_liblib0$_current,get$_resultOrListeners,deserializeCloseToken$1,_queryAllNamesInternal$2,deserializeIsolateSink$1".split(","), longNames = "p,_add,call,call,call,call,eval,_i,sb,next,then,_id,app,write,cancel,_key,_str,_xml,keys,next,urls,lookup,next=,toJson,_head,_name,_next,_tail,perform,process,_next=,addChild,_state,_table,_value,moveNext,_state=,_value=,visitMap,_addError,_callback,_dispatch,_setError,_setValue,_buffer,_scopes,comName,current,parseJobs,_handle=,current=,visitList,_sendError,_sendValue,catchError,handleNext,processJob,unregister,_assertKind,_setGlobals,allElements,containsKey,downloadJob,_callback,_contents,_duration,_workerId,quoteKind,processFile,removeFirst,_contents=,_isolateId,locconnect,namespaces,runIteration,_checkReplyTo,_add,_collection,_futurePort,hasChildren,visitSendPort,_receivePort,visitPrimitive,_nextListener,_nextListener=,toStringLiteral,visitCloseToken,_extractElements,visitIsolateSink,pollingInterval,_queryNameInternal,_length,isNamespaceInScope,deserializeSendPort,_current,_resultOrListeners,deserializeCloseToken,_queryAllNamesInternal,deserializeIsolateSink".split(",");
     for (var j = 0; j < shortNames.length; j++) {
       var type = 0;
       var short = shortNames[j];
