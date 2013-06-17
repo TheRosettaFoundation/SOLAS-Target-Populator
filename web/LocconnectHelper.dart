@@ -49,7 +49,7 @@ class LocconnectHelper{
   
   static Future<HttpRequest> sendOutput(String jobid,String output) {
     TAMain app = new TAMain();
-    output=output==null?Uri.encodeComponent("<error><msg>internal failure. the output is empty</msg></error>"):output;
+    output=output==null?"<error><msg>internal failure. the output is empty</msg></error>":output;
     var data = {'com':'${app.conf.app.comName}','id':'$jobid', 'data':'$output'};
     var url = "${app.conf.urls.locconnect}send_output.php/";
     return HttpRequest.request(url, method:"POST",sendData:encodeMap(data), requestHeaders:{'Content-type':'application/x-www-form-urlencoded'});
