@@ -1,5 +1,5 @@
 {
-  "urls":{"locconnect":"http://localhost/locconnect/"}
+  "urls":{"locconnect":"http://127.0.0.1/locconnect/"}
  ,"app":{
      "pollingInterval":1
     ,"comName":"TP"
