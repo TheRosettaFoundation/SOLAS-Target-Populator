@@ -9,6 +9,7 @@ SOLAS Target Populator supports open standards; it is ITS 2 aware by design via 
 **Coded by:**
 * [Manuel Honegger](https://github.com/manuelh)
 * [Sean Mooney](https://github.com/SeanMooney)
+* [Phillip O’Duffy](https://github.com/PhilipUL)
 
 # License notice
 This software is licensed under the terms of the GNU LESSER GENERAL PUBLIC LICENSE Version 3, 29 June 2007 For full terms see License.txt or http://www.gnu.org/licenses/lgpl-3.0.txt
